@@ -1,10 +1,13 @@
 import { Repository } from 'typeorm';
 import { Event } from './entities/event.entity';
+import { Workshop } from './entities/workshop.entity';
 import App from "../../app";
+import AppDataSource from 'core/datasource';
 
 
 export class EventsService {
   private eventRepository: Repository<Event>;
+  private workshopRepository: Repository<Workshop>;
 
   constructor(app: App) {
     this.eventRepository = app.getDataSource().getRepository(Event);
@@ -92,7 +95,25 @@ export class EventsService {
      */
 
   async getEventsWithWorkshops() {
-    throw new Error('TODO task 1');
+    const pureEvents = this.eventRepository.find();
+    const workshops = this.workshopRepository.find();
+
+    Promise.all([pureEvents, workshops]).then((values) => {
+      let eventWithWorkshops = values[0].map((item, index) => {
+        return {
+          id: item.id,
+          name: item.name,
+          createdAt: item.createdAt,
+          workshops: values[1].filter(item => item.eventId === item.id)
+        }
+      });
+      console.log('##############', eventWithWorkshops);
+      const myPromise = new Promise((resolve, reject) => {
+        resolve(eventWithWorkshops);
+      });
+
+      return myPromise;
+    });
   }
 
   /* TODO: complete getFutureEventWithWorkshops so that it returns events with workshops, that have not yet started

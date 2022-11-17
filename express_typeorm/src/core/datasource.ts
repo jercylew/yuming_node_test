@@ -1,7 +1,7 @@
 import { DataSource } from "typeorm"
-import datasource from "../conf/datasource";
+import { dataSourceOptions } from "../conf/datasource";
 
-const AppDataSource = new DataSource(datasource)
+const AppDataSource = new DataSource(dataSourceOptions)
 
 AppDataSource.initialize()
   .then(() => {
@@ -10,3 +10,5 @@ AppDataSource.initialize()
   .catch((err) => {
     console.error("Error during Data Source initialization", err)
   })
+
+  export default AppDataSource; 
